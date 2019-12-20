@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -11,14 +12,16 @@
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author Calvin
+ * @author Jorian
+ * @version 2019.12.20
  */
 
 public class Game 
 {
     private Parser parser;
     private Room currentRoom;
+    private ArrayList<Item> inventory;
         
     /**
      * Create the game and initialise its internal map.
