@@ -19,6 +19,7 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
+    private HashMap<String, Item> objects;
 
     /**
      * Create a room described "description". Initially, it has
@@ -30,6 +31,7 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<>();
+        objects = new HashMap<>();
     }
 
     /**
@@ -40,6 +42,10 @@ public class Room
     public void setExit(String direction, Room neighbor) 
     {
         exits.put(direction, neighbor);
+    }
+    
+    public void setObject(String object, Item item){
+        objects.put(object, item);
     }
 
     /**
@@ -76,6 +82,18 @@ public class Room
         }
         return returnString;
     }
+    
+    public String getObjectsString(){
+        String returnString = "Interesting objects:";
+        Set<String> keys = objects.keySet();
+        for(String object : keys) {
+            returnString += " " + object;
+        }
+        if(returnString == "Interesting objects:"){
+            returnString = "There are no objects to check here";
+        }
+        return returnString;
+    }
 
     /**
      * Return the room that is reached if we go from this room in direction
@@ -86,6 +104,10 @@ public class Room
     public Room getExit(String direction) 
     {
         return exits.get(direction);
+    }
+    
+    public Item getItem(String object){
+        return objects.get(object);
     }
 }
 

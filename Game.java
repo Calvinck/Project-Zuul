@@ -30,6 +30,7 @@ public class Game
     {
         createRooms();
         parser = new Parser();
+        inventory = new ArrayList<>();
     }
 
     /**
@@ -37,12 +38,12 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, centralhall, trashcan, hall, safe, meetingroom, controlroom;
+        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom;
       
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
         centralhall = new Room("You are standing inside the central hall");
-        trashcan = new Room("You are standing in front of the trashcan, you might have to look inside");
+        parkinglot = new Room("You are standing in the parking lot, you might want to look around");
         hall = new Room("You are now in a long hallway");
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
@@ -50,12 +51,12 @@ public class Game
         
         // initialise room exits
         outside.setExit("north", centralhall);
-        outside.setExit("east", trashcan);
+        outside.setExit("east", parkinglot);
         
 
         centralhall.setExit("south", outside);
 
-        trashcan.setExit("west", outside);
+        parkinglot.setExit("west", outside);
 
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
@@ -65,10 +66,12 @@ public class Game
         meetingroom.setExit("south", hall);
         
         controlroom.setExit("south", hall);
+        
+        parkinglot.setObject("dumpster", new Item("Guard Clothes", "nice", 1));
 
         currentRoom = outside;  // start game outside
     }
-
+    
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -121,6 +124,12 @@ public class Game
         else if (commandWord.equals("go")) {
             goRoom(command);
         }
+        else if (commandWord.equals("check")) {
+            checkObject(command);
+        }
+        else if (commandWord.equals("investigate")) {
+            investigate();
+        }
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
@@ -168,6 +177,32 @@ public class Game
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
         }
+    }
+    
+    private void checkObject(Command command){
+        if(!command.hasSecondWord()) {
+            // if there is no second word, we don't know what to check...
+            System.out.println("Check What?");
+            return;
+        }
+		
+	String object = command.getSecondWord();
+	
+	Item item = currentRoom.getItem(object);
+	
+	if(item == null){
+	    System.out.println("There ain't no here.");
+	}
+	else{
+	    inventory.add(item);
+	    String name = item.getName();
+	    System.out.println(name + " added to inventory");
+	}
+    }
+    
+    private void investigate(){
+        String string = currentRoom.getObjectsString();
+        System.out.println(string);
     }
 
     /** 

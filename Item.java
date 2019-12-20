@@ -1,4 +1,3 @@
-
 /**
  * In deze class wordt gedefineerd wat items zijn.
  *
