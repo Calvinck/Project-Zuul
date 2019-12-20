@@ -37,28 +37,34 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room outside, centralhall, trashcan, hall, safe, meetingroom, controlroom;
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        outside = new Room("You are standing outside the main entrance of the bank");
+        centralhall = new Room("You are standing inside the central hall");
+        trashcan = new Room("You are standing in front of the trashcan, you might have to look inside");
+        hall = new Room("You are now in a long hallway");
+        safe = new Room("You are standing in front of the safe");
+        meetingroom = new Room("You are standing inside the meeting room");
+        controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
         
         // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
+        outside.setExit("north", centralhall);
+        outside.setExit("east", trashcan);
+        
 
-        theater.setExit("west", outside);
+        centralhall.setExit("south", outside);
 
-        pub.setExit("east", outside);
+        trashcan.setExit("west", outside);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
+        hall.setExit("north", safe);
+        hall.setExit("south", centralhall);
+        hall.setExit("east", meetingroom);
+        hall.setExit("west", controlroom);
 
-        office.setExit("west", lab);
+        meetingroom.setExit("south", hall);
+        
+        controlroom.setExit("south", hall);
 
         currentRoom = outside;  // start game outside
     }
