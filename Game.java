@@ -43,7 +43,7 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom;
+        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom, basement, room1, room2, room3;
       
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
@@ -53,26 +53,34 @@ public class Game
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
+        basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
         
         // initialise room exits
         outside.setExit("north", centralhall);
         outside.setExit("east", parkinglot);
         
-
+        //inside the bank
         centralhall.setExit("south", outside);
-
+        
+        //Parking lot
         parkinglot.setExit("west", outside);
-
+        parkinglot.setObject("dumpster", new Item("Guard Clothes", "Your henchman left these clothes out here for you.", 1));
+        
+        //The hall inside the bank
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
         hall.setExit("east", meetingroom);
         hall.setExit("west", controlroom);
+        
+        
 
         meetingroom.setExit("south", hall);
         
         controlroom.setExit("south", hall);
         
-        parkinglot.setObject("dumpster", new Item("Guard Clothes", "Your henchman left these clothes out here for you.", 1));
+        
+        
+        
 
         currentRoom = outside;  // start game outside
     }
@@ -195,22 +203,22 @@ public class Game
             System.out.println("Check What?");
             return;
         }
-		
-	String object = command.getSecondWord();
-	
-	Item item = currentRoom.getItem(object);
-	
-	if(item == null){
-	    System.out.println("There ain't no here.");
-	}
-	else{
-	    inventory.add(item);
-	    String desc = item.getDescription();
-	    String name = item.getName();
-	    System.out.println("You have found " + name + ".");
-	    System.out.println(desc);
-	    System.out.println(name + " added to inventory");
-	}
+        
+    String object = command.getSecondWord();
+    
+    Item item = currentRoom.getItem(object);
+    
+        if(item == null){
+            System.out.println("There ain't no here.");
+        }
+        else{
+            inventory.add(item);
+            String desc = item.getDescription();
+            String name = item.getName();
+            System.out.println("You have found " + name + ".");
+            System.out.println(desc);
+            System.out.println(name + " added to inventory");
+        }
     }
     
     private void investigate(){
