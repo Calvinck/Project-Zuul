@@ -32,6 +32,7 @@ public class Game
         parser = new Parser();
         inventory = new ArrayList<>();
     }
+    
     public static void main(String[] args) {
         Game game = new Game();
         game.play();
@@ -47,7 +48,7 @@ public class Game
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
         centralhall = new Room("You are standing inside the central hall");
-        parkinglot = new Room("You are standing in the parking lot, you might want to look around");
+        parkinglot = new Room("You are standing in the parking lot, you might want to investigate");
         hall = new Room("You are now in a long hallway");
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
@@ -71,7 +72,7 @@ public class Game
         
         controlroom.setExit("south", hall);
         
-        parkinglot.setObject("dumpster", new Item("Guard Clothes", "nice", 1));
+        parkinglot.setObject("dumpster", new Item("Guard Clothes", "Your henchman left these clothes out here for you.", 1));
 
         currentRoom = outside;  // start game outside
     }
@@ -100,8 +101,12 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("Hello, do you want to play a game?");
+        System.out.println();
+        System.out.println("You are dreaming of that nice Maserati");
+        System.out.println("That nice Granturismo Sport V8");
+        System.out.println("But your Bank account says '1.5 frikadelbroodje'");
+        System.out.println();
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
@@ -150,8 +155,9 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You are at the 'Cash Money Bank' in South Africa");
+        System.out.println("It is the biggest bank in Africa.");
+        System.out.println("And you are trying to rob it. Good Luck!");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
@@ -199,7 +205,10 @@ public class Game
 	}
 	else{
 	    inventory.add(item);
+	    String desc = item.getDescription();
 	    String name = item.getName();
+	    System.out.println("You have found " + name + ".");
+	    System.out.println(desc);
 	    System.out.println(name + " added to inventory");
 	}
     }
