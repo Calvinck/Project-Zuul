@@ -22,6 +22,7 @@ public class Game
     private Parser parser;
     private Room currentRoom;
     private ArrayList<Item> inventory;
+    private Item currentOutfit;
         
     /**
      * Create the game and initialise its internal map.
@@ -53,7 +54,6 @@ public class Game
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
-        basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
         
         // initialise room exits
         outside.setExit("north", centralhall);
@@ -61,27 +61,22 @@ public class Game
         
         //inside the bank
         centralhall.setExit("south", outside);
-        
-        //Parking lot
+
         parkinglot.setExit("west", outside);
-        parkinglot.setObject("dumpster", new Item("Guard Clothes", "Your henchman left these clothes out here for you.", 1));
-        
-        //The hall inside the bank
+
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
         hall.setExit("east", meetingroom);
         hall.setExit("west", controlroom);
-        
-        
 
         meetingroom.setExit("south", hall);
         
         controlroom.setExit("south", hall);
         
-        
-        
-        
+        parkinglot.setObject("dumpster", new Item("Guard_Clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
 
+        currentOutfit = new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1); // start game in casual clothes
+        
         currentRoom = outside;  // start game outside
     }
     
@@ -141,11 +136,14 @@ public class Game
         else if (commandWord.equals("go")) {
             goRoom(command);
         }
+        else if (commandWord.equals("investigate")) {
+            investigate();
+        }
         else if (commandWord.equals("check")) {
             checkObject(command);
         }
-        else if (commandWord.equals("investigate")) {
-            investigate();
+        else if (commandWord.equals("use")) {
+            useObject(command);
         }
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
@@ -197,33 +195,61 @@ public class Game
         }
     }
     
+    private void investigate(){
+        String string = currentRoom.getObjectsString();
+        System.out.println(string);
+    }
+    
     private void checkObject(Command command){
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know what to check...
             System.out.println("Check What?");
             return;
         }
-        
-    String object = command.getSecondWord();
-    
-    Item item = currentRoom.getItem(object);
-    
-        if(item == null){
-            System.out.println("There ain't no here.");
-        }
-        else{
-            inventory.add(item);
-            String desc = item.getDescription();
-            String name = item.getName();
-            System.out.println("You have found " + name + ".");
-            System.out.println(desc);
-            System.out.println(name + " added to inventory");
-        }
+		
+	String object = command.getSecondWord();
+	
+	Item item = currentRoom.getItem(object);
+	
+	if(item == null){
+	    System.out.println("There ain't no " + object + " here.");
+	}
+	else{
+	    inventory.add(item);
+	    String desc = item.getDescription();
+	    String name = item.getName();
+	    System.out.println("You have found " + name + ".");
+	    System.out.println(desc);
+	    System.out.println(name + " added to inventory");
+	}
     }
-    
-    private void investigate(){
-        String string = currentRoom.getObjectsString();
-        System.out.println(string);
+   
+    private void useObject(Command command){
+        if(!command.hasSecondWord()) {
+            // if there is no second word, we don't know what to use...
+            System.out.println("Use What?");
+            return;
+        }
+        
+        String objectToUse = command.getSecondWord();
+        
+        Item itemToUse = null;
+        
+        for(Item item : inventory) {
+            if(item.getName().equals(objectToUse)){
+                itemToUse = item;
+            }
+        }
+        
+        if(itemToUse.getType().equals("outfit")){
+            inventory.add(currentOutfit);
+            currentOutfit = itemToUse;
+            System.out.println("Outfit changed to " + objectToUse);
+        }
+        
+        if(itemToUse.equals(null)){
+            System.out.println("There ain't no " + objectToUse + " in your inventory.");
+        }
     }
 
     /** 
