@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -21,14 +22,15 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    private HashMap<String, Item> closet;
     private ArrayList<Item> inventory;
     private Item currentOutfit;
         
     /**
      * Create the game and initialise its internal map.
      */
-    public Game() 
-    {
+    public Game(){
+        fillCloset();
         createRooms();
         parser = new Parser();
         inventory = new ArrayList<>();
@@ -37,6 +39,12 @@ public class Game
     public static void main(String[] args) {
         Game game = new Game();
         game.play();
+    }
+    
+    private void fillCloset(){
+        closet = new HashMap<>();
+        closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
+        closet.put("guardClothes", new Item("Guard_Clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
     }
 
     /**
@@ -54,16 +62,20 @@ public class Game
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
+        basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
         
         // initialise room exits
         outside.setExit("north", centralhall);
         outside.setExit("east", parkinglot);
         
-        //inside the bank
+
         centralhall.setExit("south", outside);
-
+        centralhall.setExit("north", hall);
+        
+        //Parking lot
         parkinglot.setExit("west", outside);
-
+        
+        //The hall inside the bank
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
         hall.setExit("east", meetingroom);
@@ -73,10 +85,15 @@ public class Game
         
         controlroom.setExit("south", hall);
         
-        parkinglot.setObject("dumpster", new Item("Guard_Clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
 
-        currentOutfit = new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1); // start game in casual clothes
+        //placing objects in rooms
+        parkinglot.setObject("dumpster", closet.get("guardClothes"));
+
+        //set requirements for rooms
+        hall.setRequiredOutfit(closet.get("guardClothes"));
         
+        currentOutfit = closet.get("casualClothes"); // start game in casual clothes
+
         currentRoom = outside;  // start game outside
     }
     
@@ -120,8 +137,7 @@ public class Game
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private boolean processCommand(Command command) 
-    {
+    private boolean processCommand(Command command){
         boolean wantToQuit = false;
 
         if(command.isUnknown()) {
@@ -159,8 +175,7 @@ public class Game
      * Here we print some stupid, cryptic message and a list of the 
      * command words.
      */
-    private void printHelp() 
-    {
+    private void printHelp(){
         System.out.println("You are at the 'Cash Money Bank' in South Africa");
         System.out.println("It is the biggest bank in Africa.");
         System.out.println("And you are trying to rob it. Good Luck!");
@@ -173,8 +188,7 @@ public class Game
      * Try to in to one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
      */
-    private void goRoom(Command command) 
-    {
+    private void goRoom(Command command){
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
@@ -190,8 +204,17 @@ public class Game
             System.out.println("There is no door!");
         }
         else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
+            if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
+                currentRoom = nextRoom;
+                System.out.println(currentRoom.getLongDescription());
+            }
+            else{
+                System.out.println();
+                System.out.println("з=( ͠° ͟ʖ ͡°)=ε");
+                System.out.println("This is private access sir. You cannot go here.");
+                System.out.println();
+                System.out.println(currentRoom.getLongDescription());
+            }
         }
     }
     

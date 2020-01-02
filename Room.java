@@ -20,6 +20,7 @@ public class Room
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
     private HashMap<String, Item> objects;
+    private Item requiredOutfit;
 
     /**
      * Create a room described "description". Initially, it has
@@ -32,6 +33,7 @@ public class Room
         this.description = description;
         exits = new HashMap<>();
         objects = new HashMap<>();
+        this.requiredOutfit = null;
     }
 
     /**
@@ -46,6 +48,10 @@ public class Room
     
     public void setObject(String object, Item item){
         objects.put(object, item);
+    }
+    
+    public void setRequiredOutfit(Item outfit){
+        this.requiredOutfit = outfit;
     }
 
     /**
@@ -108,6 +114,10 @@ public class Room
     
     public Item getItem(String object){
         return objects.get(object);
+    }
+    
+    public Item getRequiredOutfit(){
+        return requiredOutfit;
     }
 }
 
