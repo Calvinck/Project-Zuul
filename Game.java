@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
@@ -25,6 +26,7 @@ public class Game
     private HashMap<String, Item> closet;
     private ArrayList<Item> inventory;
     private Item currentOutfit;
+    private ArrayList<Room> prevRoom;
         
     /**
      * Create the game and initialise its internal map.
@@ -34,6 +36,7 @@ public class Game
         createRooms();
         parser = new Parser();
         inventory = new ArrayList<>();
+        prevRoom = new ArrayList<>();
     }
     
     public static void main(String[] args) {
@@ -164,10 +167,17 @@ public class Game
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
+        else if (commandWord.equals("back")) {
+            back(command);
+        }
         // else command not recognised.
         return wantToQuit;
     }
-
+    
+    private void addPrevRoom() {
+        prevRoom.add(currentRoom);
+    }
+    
     // implementations of user commands:
 
     /**
@@ -205,8 +215,10 @@ public class Game
         }
         else {
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
+                addPrevRoom();
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
+                
             }
             else{
                 System.out.println();
@@ -214,6 +226,7 @@ public class Game
                 System.out.println("This is private access sir. You cannot go here.");
                 System.out.println();
                 System.out.println(currentRoom.getLongDescription());
+                
             }
         }
     }
@@ -229,22 +242,22 @@ public class Game
             System.out.println("Check What?");
             return;
         }
-		
-	String object = command.getSecondWord();
-	
-	Item item = currentRoom.getItem(object);
-	
-	if(item == null){
-	    System.out.println("There ain't no " + object + " here.");
-	}
-	else{
-	    inventory.add(item);
-	    String desc = item.getDescription();
-	    String name = item.getName();
-	    System.out.println("You have found " + name + ".");
-	    System.out.println(desc);
-	    System.out.println(name + " added to inventory");
-	}
+        
+    String object = command.getSecondWord();
+    
+    Item item = currentRoom.getItem(object);
+    
+    if(item == null){
+        System.out.println("There ain't no " + object + " here.");
+    }
+    else{
+        inventory.add(item);
+        String desc = item.getDescription();
+        String name = item.getName();
+        System.out.println("You have found " + name + ".");
+        System.out.println(desc);
+        System.out.println(name + " added to inventory");
+    }
     }
    
     private void useObject(Command command){
@@ -289,5 +302,31 @@ public class Game
         else {
             return true;  // signal that we want to quit
         }
+    }
+    
+    private void back(Command command) {
+        
+        
+        if (command.hasSecondWord()) {
+            System.out.println("back what?");   
+        }
+            
+        else {
+            Room nextRoom = prevRoom.get(0);
+            
+            if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
+                currentRoom = nextRoom;
+                System.out.println(currentRoom.getLongDescription());
+            }
+            else{
+                System.out.println();
+                System.out.println("з=( ͠° ͟ʖ ͡°)=ε");
+                System.out.println("This is private access sir. You cannot go here.");
+                System.out.println();
+                System.out.println(currentRoom.getLongDescription());
+            }
+            
+        }
+        
     }
 }
