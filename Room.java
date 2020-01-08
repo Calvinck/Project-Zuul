@@ -1,5 +1,6 @@
 import java.util.Set;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Class Room - a room in an adventure game.
@@ -99,6 +100,12 @@ public class Room
             returnString = "There are no objects to check here";
         }
         return returnString;
+    }
+    
+    public ArrayList getObjectsArray(){
+        Set<String> keySet = objects.keySet(); 
+        ArrayList<String> objects = new ArrayList<String>(keySet);
+        return objects;
     }
 
     /**

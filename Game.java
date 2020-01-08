@@ -242,11 +242,11 @@ public class Game
         String object = command.getSecondWord();
 
         Item item = currentRoom.getItem(object);
-
-        if(object == null){
+        
+        if(!currentRoom.getObjectsArray().contains(object)){
             System.out.println("There is no " + object + " here.");
         }
-        
+
         else if(item == null){
             System.out.println(object + " is empty.");
         }
@@ -283,15 +283,19 @@ public class Game
                 itemToUse = item;
             }
         }
+        
+        if(itemToUse == null){
+            System.out.println("You don't have '" + objectToUse + "'");
+        }
 
-        if(itemToUse.getType().equals("outfit")){
+        else if(itemToUse.getType().equals("outfit")){
             inventory.add(currentOutfit);
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
         }
         
 
-        if(itemToUse.equals(null)){
+        else if(itemToUse.equals(null)){
             System.out.println("There ain't no " + objectToUse + " in your inventory.");
         }
     }
