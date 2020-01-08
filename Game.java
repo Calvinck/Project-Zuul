@@ -47,7 +47,7 @@ public class Game
     private void fillCloset(){
         closet = new HashMap<>();
         closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
-        closet.put("guardClothes", new Item("cuard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
+        closet.put("guardClothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
     }
 
     /**
