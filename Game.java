@@ -49,6 +49,7 @@ public class Game
         closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
         closet.put("guardClothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
         closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
+        closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
     }
 
     /**
@@ -67,6 +68,9 @@ public class Game
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
         basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
+        room1 = new Room("There's a drill on the table in front of you");
+        room2 = new Room("There's a door in front of you");
+        room3 = new Room("There's a door in front of you");
 
         // initialise room exits
         outside.setExit("north", centralhall);
@@ -87,10 +91,15 @@ public class Game
         meetingroom.setExit("south", hall);
 
         controlroom.setExit("south", hall);
+        
+        basement.setExit("door1", room1);
+        basement.setExit("door2", room2);
+        basement.setExit("door3", room3);
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guardClothes"));
         controlroom.setObject("bookcase", closet.get("randombook"));
+        basement.setObject("table", closet.get("guide"));
 
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guardClothes"));
@@ -249,11 +258,6 @@ public class Game
 
         else if(item == null){
             System.out.println(object + " is empty.");
-        }
-        
-        else if(item.getType() == "nonpickup") {
-            System.out.println("You found a " + item.getName() + ".");
-            System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
         }
         
         else if(item.getType() == "nonpickup") {
