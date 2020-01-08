@@ -48,6 +48,7 @@ public class Game
         closet = new HashMap<>();
         closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
         closet.put("guardClothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
+        closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
     }
 
     /**
@@ -89,6 +90,7 @@ public class Game
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guardClothes"));
+        controlroom.setObject("bookcase", closet.get("randombook"));
 
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guardClothes"));
@@ -285,6 +287,10 @@ public class Game
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
         }
+        
+        if(itemToUse.getType().equals("nonpickup")){
+            System.out.print("You do not need this so decided to put it back where it belongs.");
+        }
 
         else if(itemToUse.equals(null)){
             System.out.println("There ain't no " + objectToUse + " in your inventory.");
@@ -316,15 +322,21 @@ public class Game
         if (command.hasSecondWord()) {
             System.out.println("back what?");   
         }
-
+        
+        else if(prevRoom.size() <= 0) {
+            System.out.println("Go to another room first before you use this command.");
+        }
+        
         else {
             Room nextRoom = prevRoom.peek();
-
+            
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
                 prevRoom.pop();
             }
+            
+            
             else{
                 System.out.println();
                 System.out.println("з=( ͠° ͟ʖ ͡°)=ε");
