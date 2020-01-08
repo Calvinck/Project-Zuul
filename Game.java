@@ -1,4 +1,4 @@
-
+import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
@@ -26,8 +26,8 @@ public class Game
     private HashMap<String, Item> closet;
     private ArrayList<Item> inventory;
     private Item currentOutfit;
-    private ArrayList<Room> prevRoom;
-        
+    private Stack<Room> prevRoom;
+
     /**
      * Create the game and initialise its internal map.
      */
@@ -36,18 +36,18 @@ public class Game
         createRooms();
         parser = new Parser();
         inventory = new ArrayList<>();
-        prevRoom = new ArrayList<>();
+        prevRoom = new Stack<>();
     }
-    
+
     public static void main(String[] args) {
         Game game = new Game();
         game.play();
     }
-    
+
     private void fillCloset(){
         closet = new HashMap<>();
         closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
-        closet.put("guardClothes", new Item("Guard_Clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
+        closet.put("guardClothes", new Item("cuard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
     }
 
     /**
@@ -56,7 +56,7 @@ public class Game
     private void createRooms()
     {
         Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom, basement, room1, room2, room3;
-      
+
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
         centralhall = new Room("You are standing inside the central hall");
@@ -66,18 +66,17 @@ public class Game
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
         basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
-        
+
         // initialise room exits
         outside.setExit("north", centralhall);
         outside.setExit("east", parkinglot);
-        
 
         centralhall.setExit("south", outside);
         centralhall.setExit("north", hall);
-        
+
         //Parking lot
         parkinglot.setExit("west", outside);
-        
+
         //The hall inside the bank
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
@@ -85,21 +84,20 @@ public class Game
         hall.setExit("west", controlroom);
 
         meetingroom.setExit("south", hall);
-        
+
         controlroom.setExit("south", hall);
-        
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guardClothes"));
 
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guardClothes"));
-        
+
         currentOutfit = closet.get("casualClothes"); // start game in casual clothes
 
         currentRoom = outside;  // start game outside
     }
-    
+
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -109,7 +107,7 @@ public class Game
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
-                
+
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
@@ -173,11 +171,7 @@ public class Game
         // else command not recognised.
         return wantToQuit;
     }
-    
-    private void addPrevRoom() {
-        prevRoom.add(currentRoom);
-    }
-    
+
     // implementations of user commands:
 
     /**
@@ -218,7 +212,7 @@ public class Game
                 addPrevRoom();
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
-                
+
             }
             else{
                 System.out.println();
@@ -226,63 +220,63 @@ public class Game
                 System.out.println("This is private access sir. You cannot go here.");
                 System.out.println();
                 System.out.println(currentRoom.getLongDescription());
-                
+
             }
         }
     }
-    
+
     private void investigate(){
         String string = currentRoom.getObjectsString();
         System.out.println(string);
     }
-    
+
     private void checkObject(Command command){
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know what to check...
             System.out.println("Check What?");
             return;
         }
-        
-    String object = command.getSecondWord();
-    
-    Item item = currentRoom.getItem(object);
-    
-    if(item == null){
-        System.out.println("There ain't no " + object + " here.");
+
+        String object = command.getSecondWord();
+
+        Item item = currentRoom.getItem(object);
+
+        if(item == null){
+            System.out.println("There ain't no " + object + " here.");
+        }
+        else{
+            inventory.add(item);
+            String desc = item.getDescription();
+            String name = item.getName();
+            System.out.println("You have found " + name + ".");
+            System.out.println(desc);
+            System.out.println(name + " added to inventory");
+        }
     }
-    else{
-        inventory.add(item);
-        String desc = item.getDescription();
-        String name = item.getName();
-        System.out.println("You have found " + name + ".");
-        System.out.println(desc);
-        System.out.println(name + " added to inventory");
-    }
-    }
-   
+
     private void useObject(Command command){
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know what to use...
             System.out.println("Use What?");
             return;
         }
-        
+
         String objectToUse = command.getSecondWord();
-        
+
         Item itemToUse = null;
-        
+
         for(Item item : inventory) {
             if(item.getName().equals(objectToUse)){
                 itemToUse = item;
             }
         }
-        
+
         if(itemToUse.getType().equals("outfit")){
             inventory.add(currentOutfit);
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
         }
-        
+
         if(itemToUse.equals(null)){
             System.out.println("There ain't no " + objectToUse + " in your inventory.");
         }
@@ -303,20 +297,24 @@ public class Game
             return true;  // signal that we want to quit
         }
     }
-    
+
+    private void addPrevRoom() {
+        prevRoom.push(currentRoom);
+    }
+
     private void back(Command command) {
-        
-        
+
         if (command.hasSecondWord()) {
             System.out.println("back what?");   
         }
-            
+
         else {
-            Room nextRoom = prevRoom.get(0);
-            
+            Room nextRoom = prevRoom.peek();
+
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
+                prevRoom.pop();
             }
             else{
                 System.out.println();
@@ -325,8 +323,8 @@ public class Game
                 System.out.println();
                 System.out.println(currentRoom.getLongDescription());
             }
-            
+
         }
-        
+
     }
 }
