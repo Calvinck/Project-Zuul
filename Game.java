@@ -256,6 +256,11 @@ public class Game
             System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
         }
         
+        else if(item.getType() == "nonpickup") {
+            System.out.println("You found a " + item.getName() + ".");
+            System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
+        }
+        
         else{
             inventory.add(item);
             currentRoom.removeObject("dumpster", null);
