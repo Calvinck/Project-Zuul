@@ -250,6 +250,12 @@ public class Game
         else if(item == null){
             System.out.println(object + " is empty.");
         }
+        
+        else if(item.getType() == "nonpickup") {
+            System.out.println("You found a " + item.getName() + ".");
+            System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
+        }
+        
         else{
             inventory.add(item);
             currentRoom.removeObject("dumpster", null);
@@ -284,9 +290,6 @@ public class Game
             System.out.println("Outfit changed to " + objectToUse);
         }
         
-        if(itemToUse.getType().equals("nonpickup")){
-            System.out.print("You do not need this so decided to put it back where it belongs.");
-        }
 
         if(itemToUse.equals(null)){
             System.out.println("There ain't no " + objectToUse + " in your inventory.");
