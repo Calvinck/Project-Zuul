@@ -241,11 +241,16 @@ public class Game
 
         Item item = currentRoom.getItem(object);
 
-        if(item == null){
-            System.out.println("There ain't no " + object + " here.");
+        if(object == null){
+            System.out.println("There is no " + object + " here.");
+        }
+        
+        else if(item == null){
+            System.out.println(object + " is empty.");
         }
         else{
             inventory.add(item);
+            currentRoom.removeObject("dumpster", null);
             String desc = item.getDescription();
             String name = item.getName();
             System.out.println("You have found " + name + ".");

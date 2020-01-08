@@ -121,3 +121,7 @@ public class Room
     }
 }
 
+    public void removeObject(String from, Item to){
+        objects.replace(from, to);
+    }
+}
