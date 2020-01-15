@@ -50,6 +50,7 @@ public class Game
         closet.put("guard_clothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
         closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
         closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
+        closet.put("flyer", new Item("flyer", "A random flyer for startup company's", "nonpickup", 1000));
     }
 
     /**
@@ -100,8 +101,12 @@ public class Game
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guard_clothes"));
-        controlroom.setObject("bookcase", closet.get("randombook"));
         basement.setObject("table", closet.get("guide"));
+
+        //random items in rooms
+        centralhall.setObject("table", closet.get("flyer"));
+        ceoroom.setObject("coffeetable", closet.get("randombook"));
+        controlroom.setObject("bookcase", closet.get("randombook"));
 
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guard_clothes"));
@@ -183,6 +188,9 @@ public class Game
         }
         else if (commandWord.equals("back")) {
             back(command);
+        }
+        else if (commandWord.equals("inventory")) {
+            inventory(command);
         }
         // else command not recognised.
         return wantToQuit;
@@ -335,6 +343,21 @@ public class Game
             currentRoom.setObject("trashcan", closet.get(objectToDrop));
             inventory.remove(itemToDrop);
         }
+    }
+
+    private void inventory(Command command){
+        if(command.hasSecondWord()) {
+            System.out.println("Inventory what?");
+        }        
+
+        else if(inventory.size() >= 1){
+            for(int i = 0; i < inventory.size(); i++){
+                System.out.println(inventory.get(i).getName());
+          }
+          
+        }
+        
+        else {System.out.println("You have nothing in your inventory");}
     }
 
     /** 
