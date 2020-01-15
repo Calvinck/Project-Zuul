@@ -57,7 +57,7 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom, basement, room1, room2, room3;
+        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
 
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
@@ -71,6 +71,7 @@ public class Game
         room1 = new Room("There's a drill on the table in front of you");
         room2 = new Room("There's a door in front of you");
         room3 = new Room("There's a door in front of you");
+        ceoroom = new Room("The CEO room is so big. The CEO appears to be absent.");
 
         // initialise room exits
         outside.setExit("north", centralhall);
@@ -91,7 +92,8 @@ public class Game
         meetingroom.setExit("south", hall);
 
         controlroom.setExit("south", hall);
-        
+        controlroom.setExit("up", ceoroom);
+
         basement.setExit("door1", room1);
         basement.setExit("door2", room2);
         basement.setExit("door3", room3);
@@ -251,7 +253,7 @@ public class Game
         String object = command.getSecondWord();
 
         Item item = currentRoom.getItem(object);
-        
+
         if(!currentRoom.getObjectsArray().contains(object)){
             System.out.println("There is no " + object + " here.");
         }
@@ -259,12 +261,12 @@ public class Game
         else if(item == null){
             System.out.println(object + " is empty.");
         }
-        
+
         else if(item.getType() == "nonpickup") {
             System.out.println("You found a " + item.getName() + ".");
             System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
         }
-        
+
         else{
             inventory.add(item);
             currentRoom.removeObject("dumpster", null);
@@ -292,7 +294,7 @@ public class Game
                 itemToUse = item;
             }
         }
-        
+
         if(itemToUse == null){
             System.out.println("You don't have '" + objectToUse + "'");
         }
@@ -302,7 +304,6 @@ public class Game
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
         }
-        
 
         else if(itemToUse.equals(null)){
             System.out.println("There ain't no " + objectToUse + " in your inventory.");
@@ -334,21 +335,20 @@ public class Game
         if (command.hasSecondWord()) {
             System.out.println("back what?");   
         }
-        
+
         else if(prevRoom.size() <= 0) {
             System.out.println("Go to another room first before you use this command.");
         }
-        
+
         else {
             Room nextRoom = prevRoom.peek();
-            
+
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
                 prevRoom.pop();
             }
-            
-            
+
             else{
                 System.out.println();
                 System.out.println("з=( ͠° ͟ʖ ͡°)=ε");
