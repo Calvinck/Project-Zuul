@@ -121,7 +121,6 @@ public class Game
         centralhall.setObject("table", closet.get("flyer"));
         ceoroom.setObject("coffeetable", closet.get("randombook"));
 
-
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guard_clothes"));
         meetingroom.setRequiredOutfit(closet.get("guard_clothes"));
@@ -240,7 +239,7 @@ public class Game
             System.out.println("Go where?");
             return;
         }
-        
+
         String door = "deur.wav";
         String direction = command.getSecondWord();
 
@@ -260,7 +259,6 @@ public class Game
                 addPrevRoom();
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
-                
 
             }
             else{
@@ -342,18 +340,18 @@ public class Game
             System.out.println("You don't have '" + objectToUse + "'");
         }
         else if(itemToUse.getType().equals("outfit")){
-			if(currentRoom.getRequiredOutfit() != null){
+            if(currentRoom.getRequiredOutfit() != null){
                 System.out.println("You can not change you outfit now.");
             }
             else{
-				musicplayer.playMusic(omkleden);
+                musicplayer.playMusic(omkleden);
                 inventory.add(currentOutfit);
                 currentOutfit = itemToUse;
                 inventory.remove(itemToUse);
                 System.out.println("Outfit changed to " + objectToUse);
             }
         }
-		else if(itemToUse.getType().equals("book")){
+        else if(itemToUse.getType().equals("book")){
             System.out.println(itemToUse.getContent());
         }
     }
@@ -394,9 +392,9 @@ public class Game
         else if(inventory.size() >= 1){
             for(int i = 0; i < inventory.size(); i++){
                 System.out.println(inventory.get(i).getName());
-          }
+            }
         }
-        
+
         else {System.out.println("You have nothing in your inventory");}
     }
 
