@@ -46,8 +46,8 @@ public class Game
 
     private void fillCloset(){
         closet = new HashMap<>();
-        closet.put("casualClothes", new Item("Casual_Clothes", "Your normal everyday clothing", "outfit", 1));
-        closet.put("guardClothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
+        closet.put("casual_clothes", new Item("casual_clothes", "Your normal everyday clothing", "outfit", 1));
+        closet.put("guard_clothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
         closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
         closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
     }
@@ -99,14 +99,14 @@ public class Game
         basement.setExit("door3", room3);
 
         //placing objects in rooms
-        parkinglot.setObject("dumpster", closet.get("guardClothes"));
+        parkinglot.setObject("dumpster", closet.get("guard_clothes"));
         controlroom.setObject("bookcase", closet.get("randombook"));
         basement.setObject("table", closet.get("guide"));
 
         //set requirements for rooms
-        hall.setRequiredOutfit(closet.get("guardClothes"));
+        hall.setRequiredOutfit(closet.get("guard_clothes"));
 
-        currentOutfit = closet.get("casualClothes"); // start game in casual clothes
+        currentOutfit = closet.get("casual_clothes"); // start game in casual clothes
 
         currentRoom = outside;  // start game outside
     }
@@ -174,6 +174,9 @@ public class Game
         }
         else if (commandWord.equals("use")) {
             useObject(command);
+        }
+        else if (commandWord.equals("drop")) {
+            dropObject(command);
         }
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
@@ -269,7 +272,7 @@ public class Game
 
         else{
             inventory.add(item);
-            currentRoom.removeObject("dumpster", null);
+            currentRoom.removeObject(object, null);
             String desc = item.getDescription();
             String name = item.getName();
             System.out.println("You have found " + name + ".");
@@ -304,9 +307,33 @@ public class Game
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
         }
+    }
 
-        else if(itemToUse.equals(null)){
-            System.out.println("There ain't no " + objectToUse + " in your inventory.");
+    private void dropObject (Command command) {
+        if(!command.hasSecondWord()) {
+            // if there is no second word, we don't know what to use...
+            System.out.println("Drop What?");
+            return;
+        }
+
+        String objectToDrop = command.getSecondWord();
+
+        Item itemToDrop = null;
+
+        for(Item item : inventory) {
+            if(item.getName().equals(objectToDrop)){
+                itemToDrop = item;
+            }
+        }
+
+        if(itemToDrop == null){
+            System.out.println("You don't have '" + objectToDrop + "'");
+        }
+
+        else {
+            System.out.println("You just dropped " + objectToDrop + " in the trashcan. You can pick it up later if needed.");
+            currentRoom.setObject("trashcan", closet.get(objectToDrop));
+            inventory.remove(itemToDrop);
         }
     }
 
