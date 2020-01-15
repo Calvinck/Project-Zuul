@@ -28,6 +28,7 @@ public class Game
     private Item currentOutfit;
     private Stack<Room> prevRoom;
     private PlayMusic musicplayer;
+    private Room outside, centralhall, parkinglot, restroom, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
 
     /**
      * Create the game and initialise its internal map.
@@ -53,6 +54,11 @@ public class Game
         closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
         closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
         closet.put("flyer", new Item("flyer", "A random flyer for startup company's", "nonpickup", 1000));
+        closet.put("door_remote", new Item("door_remote", "this remote can open all doors you like.", "dooropener",99));
+        closet.put("safeKey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
+        closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used these to rob this bank but he got caught. Contains duffle bag", "outfit", 3));
+        Item guide = closet.get("guide");
+        guide.setText("Drill in de goeie joo");
     }
 
     /**
@@ -60,33 +66,33 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, centralhall, parkinglot, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
-
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
         centralhall = new Room("You are standing inside the central hall");
         parkinglot = new Room("You are standing in the parking lot, you might want to investigate");
+        restroom = new Room("You are standing in the banks gender equality restroom, quite stinky");
         hall = new Room("You are now in a long hallway");
         safe = new Room("You are standing in front of the safe");
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
-        basement = new Room("In front of you are 3 rooms. pick the west, north or east door.");
+        basement = new Room("In front of you are 3 rooms. pick the west, north or east door");
         room1 = new Room("There's a drill on the table in front of you");
         room2 = new Room("There's a door in front of you");
         room3 = new Room("There's a door in front of you");
-        ceoroom = new Room("The CEO room is so big. The CEO appears to be absent.");
+        ceoroom = new Room("The CEO room is so big. The CEO appears to be asleep, you have to be very quiet");
 
         // initialise room exits
         outside.setExit("north", centralhall);
         outside.setExit("east", parkinglot);
 
         centralhall.setExit("south", outside);
+        centralhall.setExit("west", restroom);
         centralhall.setExit("north", hall);
 
-        //Parking lot
+        restroom.setExit("east", centralhall);
+
         parkinglot.setExit("west", outside);
 
-        //The hall inside the bank
         hall.setExit("north", safe);
         hall.setExit("south", centralhall);
         hall.setExit("east", meetingroom);
@@ -100,18 +106,28 @@ public class Game
         basement.setExit("door1", room1);
         basement.setExit("door2", room2);
         basement.setExit("door3", room3);
+        meetingroom.lockDoor();
+        ceoroom.lockDoor();
+        safe.lockDoor();
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guard_clothes"));
+        controlroom.setObject("bookcase", closet.get("randombook"));
         basement.setObject("table", closet.get("guide"));
+        meetingroom.setObject("cupboard", closet.get("burglar_clothes"));
+        controlroom.setObject("doorunlocker", closet.get("door_remote"));
 
         //random items in rooms
         centralhall.setObject("table", closet.get("flyer"));
         ceoroom.setObject("coffeetable", closet.get("randombook"));
-        controlroom.setObject("bookcase", closet.get("randombook"));
+
 
         //set requirements for rooms
         hall.setRequiredOutfit(closet.get("guard_clothes"));
+        meetingroom.setRequiredOutfit(closet.get("guard_clothes"));
+        controlroom.setRequiredOutfit(closet.get("guard_clothes"));
+        ceoroom.setRequiredOutfit(closet.get("guard_clothes"));
+        safe.setRequiredOutfit(closet.get("guard_clothes"));
 
         currentOutfit = closet.get("casual_clothes"); // start game in casual clothes
 
@@ -234,7 +250,11 @@ public class Game
         if (nextRoom == null) {
             System.out.println("There is no door!");
         }
-        else {
+        else{
+            if(nextRoom.getIfLocked()){
+                System.out.println("This room is locked, you can not go here.");
+                return;
+            }
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
                 musicplayer.playMusic(door);
                 addPrevRoom();
@@ -282,6 +302,12 @@ public class Game
             System.out.println("You found a " + item.getName() + ".");
             System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
         }
+        else if(item.getType() == "dooropener"){
+            meetingroom.unlockDoor();
+            ceoroom.unlockDoor();
+            safe.unlockDoor();
+            System.out.println("You have found the room lock remote and decided to unlock the meetingroom, ceoroom and the safe.");
+        }
 
         else{
             inventory.add(item);
@@ -315,12 +341,20 @@ public class Game
         if(itemToUse == null){
             System.out.println("You don't have '" + objectToUse + "'");
         }
-
         else if(itemToUse.getType().equals("outfit")){
-            musicplayer.playMusic(omkleden);
-            inventory.add(currentOutfit);
-            currentOutfit = itemToUse;
-            System.out.println("Outfit changed to " + objectToUse);
+			if(currentRoom.getRequiredOutfit() != null){
+                System.out.println("You can not change you outfit now.");
+            }
+            else{
+				musicplayer.playMusic(omkleden);
+                inventory.add(currentOutfit);
+                currentOutfit = itemToUse;
+                inventory.remove(itemToUse);
+                System.out.println("Outfit changed to " + objectToUse);
+            }
+        }
+		else if(itemToUse.getType().equals("book")){
+            System.out.println(itemToUse.getContent());
         }
     }
 
@@ -361,7 +395,6 @@ public class Game
             for(int i = 0; i < inventory.size(); i++){
                 System.out.println(inventory.get(i).getName());
           }
-          
         }
         
         else {System.out.println("You have nothing in your inventory");}

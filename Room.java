@@ -22,6 +22,7 @@ public class Room
     private HashMap<String, Room> exits;        // stores exits of this room.
     private HashMap<String, Item> objects;
     private Item requiredOutfit;
+    private boolean locked;
 
     /**
      * Create a room described "description". Initially, it has
@@ -31,10 +32,11 @@ public class Room
      */
     public Room(String description) 
     {
-        this.description = description;
         exits = new HashMap<>();
         objects = new HashMap<>();
+        this.description = description;
         this.requiredOutfit = null;
+        this.locked = false;
     }
 
     /**
@@ -118,17 +120,22 @@ public class Room
     {
         return exits.get(direction);
     }
-    
     public Item getItem(String object){
         return objects.get(object);
     }
-    
     public Item getRequiredOutfit(){
         return requiredOutfit;
     }
-
-
+    public boolean getIfLocked(){
+        return this.locked;
+    }
     public void removeObject(String from, Item to){
         objects.replace(from, to);
+    }
+    public void lockDoor(){
+        this.locked = true;
+    }
+    public void unlockDoor(){
+        this.locked = false;
     }
 }
