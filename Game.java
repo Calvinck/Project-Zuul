@@ -27,6 +27,7 @@ public class Game
     private ArrayList<Item> inventory;
     private Item currentOutfit;
     private Stack<Room> prevRoom;
+    private PlayMusic musicplayer;
 
     /**
      * Create the game and initialise its internal map.
@@ -37,6 +38,7 @@ public class Game
         parser = new Parser();
         inventory = new ArrayList<>();
         prevRoom = new Stack<>();
+        musicplayer = new PlayMusic();
     }
 
     public static void main(String[] args) {
@@ -222,7 +224,8 @@ public class Game
             System.out.println("Go where?");
             return;
         }
-
+        
+        String door = "deur.wav";
         String direction = command.getSecondWord();
 
         // Try to leave current room.
@@ -233,9 +236,11 @@ public class Game
         }
         else {
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
+                musicplayer.playMusic(door);
                 addPrevRoom();
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
+                
 
             }
             else{
@@ -297,6 +302,7 @@ public class Game
         }
 
         String objectToUse = command.getSecondWord();
+        String omkleden = "Omkleden.wav";
 
         Item itemToUse = null;
 
@@ -311,6 +317,7 @@ public class Game
         }
 
         else if(itemToUse.getType().equals("outfit")){
+            musicplayer.playMusic(omkleden);
             inventory.add(currentOutfit);
             currentOutfit = itemToUse;
             System.out.println("Outfit changed to " + objectToUse);
