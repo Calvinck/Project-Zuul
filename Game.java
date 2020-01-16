@@ -124,6 +124,7 @@ public class Game
         meetingroom.lockDoor();
         ceoroom.lockDoor();
         safe.lockDoor();
+        moneyroom.lockDoor();
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guard_clothes"));
@@ -175,6 +176,9 @@ public class Game
      */
     private void printWelcome()
     {
+        String welcome = "welcome.wav";
+
+        musicplayer.playMusic(welcome);
         System.out.println();
         System.out.println("Hello, do you want to play a game?");
         System.out.println();
@@ -348,6 +352,7 @@ public class Game
         String objectToUse = command.getSecondWord();
 
         String omkleden = "Omkleden.wav";
+        String valgeluid = "valgeluid.wav";
         Item itemToUse = null;
 
         for(Item item : inventory) {
@@ -360,14 +365,13 @@ public class Game
             System.out.println("You don't have '" + objectToUse + "'");
         }
 
-        else if(itemToUse.getName().equals("safekey") && currentRoom.getExit("north").equals(moneyroom)){
-            addPrevRoom();
+        else if(itemToUse.getName().equals("safekey") && !currentRoom.equals(safe)){
+            System.out.println("You can only use this key in the safe!");
+        }
+        else if(itemToUse.getName().equals("safekey") && currentRoom.equals(safe)){
+            musicplayer.playMusic(valgeluid);
             currentRoom = basement;
             System.out.println(currentRoom.getLongDescription());
-        }
-
-        else if(itemToUse.getName().equals("safekey") && !currentRoom.getExit("north").equals(moneyroom)){
-            System.out.println("You can only use this key in the safe!");
         }
 
         else if(itemToUse.getType().equals("outfit")){

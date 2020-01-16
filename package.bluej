@@ -1,12 +1,12 @@
 #BlueJ package file
-dependency1.from=Parser
-dependency1.to=CommandWords
+dependency1.from=Room
+dependency1.to=Item
 dependency1.type=UsesDependency
 dependency2.from=Parser
-dependency2.to=Command
+dependency2.to=CommandWords
 dependency2.type=UsesDependency
-dependency3.from=Room
-dependency3.to=Item
+dependency3.from=Parser
+dependency3.to=Command
 dependency3.type=UsesDependency
 dependency4.from=Game
 dependency4.to=Parser
