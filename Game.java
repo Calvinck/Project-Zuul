@@ -110,7 +110,10 @@ public class Game
         controlroom.setExit("south", hall);
         controlroom.setExit("up", ceoroom);
 
+        ceoroom.setExit("down", controlroom);
+        
         safe.setExit("south", hall);
+        
         basement.setExit("north", northbasement);
         basement.setExit("east", eastbasement);
         basement.setExit("south", southbasement);
@@ -124,7 +127,6 @@ public class Game
         meetingroom.lockDoor();
         ceoroom.lockDoor();
         safe.lockDoor();
-        moneyroom.lockDoor();
 
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guard_clothes"));
@@ -396,11 +398,11 @@ public class Game
                 System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
             }
             else if(currentRoom.equals(eastbasement)){
-                northbasement.setExit("up", parkinglot);
+                eastbasement.setExit("up", parkinglot);
                 System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
             }
             else if(currentRoom.equals(southbasement)){
-                northbasement.setExit("up", centralhall);
+                southbasement.setExit("up", centralhall);
                 System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
             }
             else if(currentRoom.equals(westbasement)){
