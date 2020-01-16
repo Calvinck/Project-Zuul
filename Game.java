@@ -2,24 +2,24 @@ import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
- *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
+ *  This class is the main class of the "World of Zuul" application.
+ *  "World of Zuul" is a very simple, text based adventure game.  Users
+ *  can walk around some scenery. That's all. It should really be extended
  *  to make it more interesting!
- * 
+ *
  *  To play this game, create an instance of this class and call the "play"
  *  method.
- * 
+ *
  *  This main class creates and initialises all the others: it creates all
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
- * 
+ *
  * @author Calvin
  * @author Jorian
  * @version 2019.12.20
  */
 
-public class Game 
+public class Game
 {
     private Parser parser;
     private Room currentRoom;
@@ -28,7 +28,7 @@ public class Game
     private Item currentOutfit;
     private Stack<Room> prevRoom;
     private PlayMusic musicplayer;
-    private Room outside, centralhall, parkinglot, restroom, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
+    private Room outside, centralhall, parkinglot, restroom, moneyroom, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
 
     /**
      * Create the game and initialise its internal map.
@@ -40,6 +40,7 @@ public class Game
         inventory = new ArrayList<>();
         prevRoom = new Stack<>();
         musicplayer = new PlayMusic();
+
     }
 
     public static void main(String[] args) {
@@ -55,7 +56,7 @@ public class Game
         closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
         closet.put("flyer", new Item("flyer", "A random flyer for startup company's", "nonpickup", 1000));
         closet.put("door_remote", new Item("door_remote", "this remote can open all doors you like.", "dooropener",99));
-        closet.put("safeKey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
+        closet.put("safekey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
         closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used these to rob this bank but he got caught. Contains duffle bag", "outfit", 3));
         Item guide = closet.get("guide");
         guide.setText("Drill in de goeie joo");
@@ -68,18 +69,19 @@ public class Game
     {
         // create the rooms
         outside = new Room("You are standing outside the main entrance of the bank");
-        centralhall = new Room("You are standing inside the central hall");
+        centralhall = new Room("You are standing inside the central hall. It's a big room");
         parkinglot = new Room("You are standing in the parking lot, you might want to investigate");
-        restroom = new Room("You are standing in the banks gender equality restroom, quite stinky");
-        hall = new Room("You are now in a long hallway");
-        safe = new Room("You are standing in front of the safe");
+        hall = new Room("You are now in a long hallway. There are 3 rooms.");
+        safe = new Room("You are standing inside the safe, but the money is behind bars. Use your key.");
         meetingroom = new Room("You are standing inside the meeting room");
-        controlroom = new Room("Your are standing inside the controlroom, there is a golden key on the table");
+        controlroom = new Room("Your are standing inside the controlroom.");
         basement = new Room("In front of you are 3 rooms. pick the west, north or east door");
         room1 = new Room("There's a drill on the table in front of you");
         room2 = new Room("There's a door in front of you");
         room3 = new Room("There's a door in front of you");
         ceoroom = new Room("The CEO room is so big. The CEO appears to be asleep, you have to be very quiet");
+        restroom = new Room("The Restroom");
+        moneyroom = new Room("The moneyroom");
 
         // initialise room exits
         outside.setExit("north", centralhall);
@@ -106,6 +108,8 @@ public class Game
         basement.setExit("door1", room1);
         basement.setExit("door2", room2);
         basement.setExit("door3", room3);
+
+        safe.setExit("south", hall);
         meetingroom.lockDoor();
         ceoroom.lockDoor();
         safe.lockDoor();
@@ -113,9 +117,10 @@ public class Game
         //placing objects in rooms
         parkinglot.setObject("dumpster", closet.get("guard_clothes"));
         controlroom.setObject("bookcase", closet.get("randombook"));
+        controlroom.setObject("doorunlocker", closet.get("door_remote"));
         basement.setObject("table", closet.get("guide"));
         meetingroom.setObject("cupboard", closet.get("burglar_clothes"));
-        controlroom.setObject("doorunlocker", closet.get("door_remote"));
+        centralhall.setObject("t2", closet.get("safekey"));
 
         //random items in rooms
         centralhall.setObject("table", closet.get("flyer"));
@@ -136,8 +141,8 @@ public class Game
     /**
      *  Main play routine.  Loops until end of play.
      */
-    public void play() 
-    {            
+    public void play()
+    {
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
@@ -217,7 +222,7 @@ public class Game
 
     /**
      * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the 
+     * Here we print some stupid, cryptic message and a list of the
      * command words.
      */
     private void printHelp(){
@@ -229,7 +234,7 @@ public class Game
         parser.showCommands();
     }
 
-    /** 
+    /**
      * Try to in to one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
      */
@@ -242,7 +247,6 @@ public class Game
 
         String door = "deur.wav";
         String direction = command.getSecondWord();
-
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
 
@@ -255,7 +259,9 @@ public class Game
                 return;
             }
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
-                musicplayer.playMusic(door);
+                if(nextRoom.getShortDescription().contains("room")){
+                    musicplayer.playMusic(door);
+                }
                 addPrevRoom();
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
@@ -326,8 +332,8 @@ public class Game
         }
 
         String objectToUse = command.getSecondWord();
-        String omkleden = "Omkleden.wav";
 
+        String omkleden = "Omkleden.wav";
         Item itemToUse = null;
 
         for(Item item : inventory) {
@@ -339,6 +345,17 @@ public class Game
         if(itemToUse == null){
             System.out.println("You don't have '" + objectToUse + "'");
         }
+
+        else if(itemToUse.getName().equals("safekey") && currentRoom.getExit("north").equals(moneyroom)){
+            addPrevRoom();
+            currentRoom = basement;
+            System.out.println(currentRoom.getLongDescription());
+        }
+
+        else if(itemToUse.getName().equals("safekey") && !currentRoom.getExit("north").equals(moneyroom)){
+            System.out.println("You can only use this key in the safe!");
+        }
+
         else if(itemToUse.getType().equals("outfit")){
             if(currentRoom.getRequiredOutfit() != null){
                 System.out.println("You can not change you outfit now.");
@@ -387,7 +404,7 @@ public class Game
     private void inventory(Command command){
         if(command.hasSecondWord()) {
             System.out.println("Inventory what?");
-        }        
+        }
 
         else if(inventory.size() >= 1){
             for(int i = 0; i < inventory.size(); i++){
@@ -398,12 +415,12 @@ public class Game
         else {System.out.println("You have nothing in your inventory");}
     }
 
-    /** 
+    /**
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private boolean quit(Command command) 
+    private boolean quit(Command command)
     {
         if(command.hasSecondWord()) {
             System.out.println("Quit what?");
@@ -421,17 +438,25 @@ public class Game
     private void back(Command command) {
 
         if (command.hasSecondWord()) {
-            System.out.println("back what?");   
+            System.out.println("back what?");
         }
 
         else if(prevRoom.size() <= 0) {
             System.out.println("Go to another room first before you use this command.");
         }
 
+        else if(currentRoom.equals(basement)){
+            prevRoom.clear();
+            System.out.println("You are stuck in the basement. You can't get back up!");
+        }
         else {
             Room nextRoom = prevRoom.peek();
+            String door = "deur.wav";
 
             if(nextRoom.getRequiredOutfit() == null || nextRoom.getRequiredOutfit() == currentOutfit){
+                if(nextRoom.getShortDescription().contains("room")){
+                    musicplayer.playMusic(door);
+                }
                 currentRoom = nextRoom;
                 System.out.println(currentRoom.getLongDescription());
                 prevRoom.pop();
