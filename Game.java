@@ -28,7 +28,8 @@ public class Game
     private Item currentOutfit;
     private Stack<Room> prevRoom;
     private PlayMusic musicplayer;
-    private Room outside, centralhall, parkinglot, restroom, moneyroom, hall, safe, meetingroom, controlroom, ceoroom, basement, room1, room2, room3;
+
+    private Room outside, centralhall, parkinglot, restroom, moneyroom, hall, safe, meetingroom, controlroom, ceoroom, basement, northbasement, eastbasement, southbasement, westbasement;
 
     /**
      * Create the game and initialise its internal map.
@@ -58,7 +59,10 @@ public class Game
         closet.put("door_remote", new Item("door_remote", "this remote can open all doors you like.", "dooropener",99));
         closet.put("safekey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
         closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used these to rob this bank but he got caught. Contains duffle bag", "outfit", 3));
-        Item guide = closet.get("guide");
+        closet.put("book_of_knowlage", new Item("book_of_knowlage", "This book knows all", "book", 1));
+        closet.put("drill", new Item("drill", "This is a big jackhammer, maybe you can use this to escape.", "drill", 6));
+
+        Item guide = closet.get("book_of_knowlage");
         guide.setText("Drill in de goeie joo");
     }
 
@@ -75,10 +79,11 @@ public class Game
         safe = new Room("You are standing inside the safe, but the money is behind bars. Use your key.");
         meetingroom = new Room("You are standing inside the meeting room");
         controlroom = new Room("Your are standing inside the controlroom.");
-        basement = new Room("In front of you are 3 rooms. pick the west, north or east door");
-        room1 = new Room("There's a drill on the table in front of you");
-        room2 = new Room("There's a door in front of you");
-        room3 = new Room("There's a door in front of you");
+        basement = new Room("You're in the basement. This is the place where you fell down.");
+        northbasement = new Room("You are in the north side of the basement");
+        eastbasement = new Room("You are in the east side of the basement");
+        southbasement = new Room("You are int the south side of the basement");
+        westbasement = new Room("You are in the west side of the basement");
         ceoroom = new Room("The CEO room is so big. The CEO appears to be asleep, you have to be very quiet");
         restroom = new Room("The Restroom");
         moneyroom = new Room("The moneyroom");
@@ -105,11 +110,17 @@ public class Game
         controlroom.setExit("south", hall);
         controlroom.setExit("up", ceoroom);
 
-        basement.setExit("door1", room1);
-        basement.setExit("door2", room2);
-        basement.setExit("door3", room3);
-
         safe.setExit("south", hall);
+        basement.setExit("north", northbasement);
+        basement.setExit("east", eastbasement);
+        basement.setExit("south", southbasement);
+        basement.setExit("west", westbasement);
+
+        northbasement.setExit("south", basement);
+        eastbasement.setExit("west", basement);
+        southbasement.setExit("north", basement);
+        westbasement.setExit("east", basement);
+
         meetingroom.lockDoor();
         ceoroom.lockDoor();
         safe.lockDoor();
@@ -121,6 +132,9 @@ public class Game
         basement.setObject("table", closet.get("guide"));
         meetingroom.setObject("cupboard", closet.get("burglar_clothes"));
         ceoroom.setObject("Keycabinet", closet.get("safekey"));
+        controlroom.setObject("doorunlocker", closet.get("door_remote"));
+        basement.setObject("bookcase", closet.get("book_of_knowlage"));
+        westbasement.setObject("toolwall", closet.get("drill"));
 
         //random items in rooms
         centralhall.setObject("table", closet.get("flyer"));
@@ -370,6 +384,24 @@ public class Game
         }
         else if(itemToUse.getType().equals("book")){
             System.out.println(itemToUse.getContent());
+        }
+        else if(itemToUse.getType().equals("drill")){
+            if(currentRoom.equals(northbasement)){
+                northbasement.setExit("up", moneyroom);
+                moneyroom.setExit("down", northbasement);
+                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+            }
+            else if(currentRoom.equals(eastbasement)){
+                northbasement.setExit("up", parkinglot);
+                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+            }
+            else if(currentRoom.equals(southbasement)){
+                northbasement.setExit("up", centralhall);
+                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+            }
+            else if(currentRoom.equals(westbasement)){
+                System.out.println("You have drilled into the gender equality sewer. Nasty.");
+            }
         }
     }
 

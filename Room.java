@@ -48,11 +48,11 @@ public class Room
     {
         exits.put(direction, neighbor);
     }
-    
+
     public void setObject(String object, Item item){
         objects.put(object, item);
     }
-    
+
     public void setRequiredOutfit(Item outfit){
         this.requiredOutfit = outfit;
     }
@@ -91,7 +91,7 @@ public class Room
         }
         return returnString;
     }
-    
+
     public String getObjectsString(){
         String returnString = "Interesting objects:";
         Set<String> keys = objects.keySet();
@@ -103,7 +103,7 @@ public class Room
         }
         return returnString;
     }
-    
+
     public ArrayList getObjectsArray(){
         Set<String> keySet = objects.keySet(); 
         ArrayList<String> objects = new ArrayList<String>(keySet);
@@ -120,22 +120,28 @@ public class Room
     {
         return exits.get(direction);
     }
+
     public Item getItem(String object){
         return objects.get(object);
     }
+
     public Item getRequiredOutfit(){
         return requiredOutfit;
     }
+
     public boolean getIfLocked(){
         return this.locked;
     }
+
     public void removeObject(String from, Item to){
         objects.replace(from, to);
     }
+
     public void lockDoor(){
         this.locked = true;
     }
-    public void unlockDoor(){
+
+public void unlockDoor(){
         this.locked = false;
     }
 }
