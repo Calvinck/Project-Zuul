@@ -120,7 +120,7 @@ public class Game
         controlroom.setObject("doorunlocker", closet.get("door_remote"));
         basement.setObject("table", closet.get("guide"));
         meetingroom.setObject("cupboard", closet.get("burglar_clothes"));
-        centralhall.setObject("t2", closet.get("safekey"));
+        ceoroom.setObject("Keycabinet", closet.get("safekey"));
 
         //random items in rooms
         centralhall.setObject("table", closet.get("flyer"));
