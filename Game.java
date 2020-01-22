@@ -51,19 +51,22 @@ public class Game
 
     private void fillCloset(){
         closet = new HashMap<>();
+        //initialize all items in the game
         closet.put("casual_clothes", new Item("casual_clothes", "Your normal everyday clothing", "outfit", 1));
         closet.put("guard_clothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 1));
-        closet.put("randombook", new Item("randombook", "This is a random book about running a bank", "nonpickup", 1000));
-        closet.put("guide", new Item("guide", "The title of the book says 'how to escape the basement'", "pickup", 1));
+        closet.put("randombook", new Item("randombook", "This is a random book about some love issues", "nonpickup", 1));
+        closet.put("running_a_bank", new Item("running_a_bank", "This is a book about running a bank'", "pickup", 1));
         closet.put("flyer", new Item("flyer", "A random flyer for startup company's", "nonpickup", 1000));
         closet.put("door_remote", new Item("door_remote", "this remote can open all doors you like.", "dooropener",99));
         closet.put("safekey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
         closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used these to rob this bank but he got caught. Contains duffle bag", "outfit", 3));
         closet.put("book_of_knowlage", new Item("book_of_knowlage", "This book knows all", "book", 1));
         closet.put("drill", new Item("drill", "This is a big jackhammer, maybe you can use this to escape.", "drill", 6));
-
-        Item guide = closet.get("book_of_knowlage");
-        guide.setText("Drill in de goeie joo");
+        closet.put("pennies", new Item("pennies", "A bag of pennies, probably worth about $10", "pickup", 2));
+        
+        //write books here
+        Writer writer = new Writer();
+        closet.get("book_of_knowlage").setText(writer.writeBook("book_of_knowlage"));
     }
 
     /**
@@ -85,7 +88,7 @@ public class Game
         southbasement = new Room("You are int the south side of the basement");
         westbasement = new Room("You are in the west side of the basement");
         ceoroom = new Room("The CEO room is so big. The CEO appears to be asleep, you have to be very quiet");
-        restroom = new Room("The Restroom");
+        restroom = new Room("You are standing in the banks gender equality restroom, quite stinky");
         moneyroom = new Room("The moneyroom");
 
         // initialise room exits
@@ -111,9 +114,9 @@ public class Game
         controlroom.setExit("up", ceoroom);
 
         ceoroom.setExit("down", controlroom);
-        
+
         safe.setExit("south", hall);
-        
+
         basement.setExit("north", northbasement);
         basement.setExit("east", eastbasement);
         basement.setExit("south", southbasement);
@@ -134,7 +137,7 @@ public class Game
         controlroom.setObject("doorunlocker", closet.get("door_remote"));
         basement.setObject("table", closet.get("guide"));
         meetingroom.setObject("cupboard", closet.get("burglar_clothes"));
-        ceoroom.setObject("Keycabinet", closet.get("safekey"));
+        ceoroom.setObject("keycabinet", closet.get("safekey"));
         controlroom.setObject("doorunlocker", closet.get("door_remote"));
         basement.setObject("bookcase", closet.get("book_of_knowlage"));
         westbasement.setObject("toolwall", closet.get("drill"));
@@ -333,7 +336,7 @@ public class Game
             System.out.println("You have found the room lock remote and decided to unlock the meetingroom, ceoroom and the safe.");
         }
 
-        else{
+        else if(item.getWeight() + inventoryWeight() <= 10){
             inventory.add(item);
             currentRoom.removeObject(object, null);
             String desc = item.getDescription();
@@ -341,6 +344,10 @@ public class Game
             System.out.println("You have found " + name + ".");
             System.out.println(desc);
             System.out.println(name + " added to inventory");
+        }
+        else{
+            System.out.println("You have found " + item.getName() + ".");
+            System.out.println("But your inventory is full so you have to put it back");
         }
     }
 
@@ -373,6 +380,7 @@ public class Game
         else if(itemToUse.getName().equals("safekey") && currentRoom.equals(safe)){
             musicplayer.playMusic(valgeluid);
             currentRoom = basement;
+            System.out.println("It's a trap!");
             System.out.println(currentRoom.getLongDescription());
         }
 
@@ -392,21 +400,29 @@ public class Game
             System.out.println(itemToUse.getContent());
         }
         else if(itemToUse.getType().equals("drill")){
-            if(currentRoom.equals(northbasement)){
-                northbasement.setExit("up", moneyroom);
-                moneyroom.setExit("down", northbasement);
-                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+            if(currentRoom.getExit("up") == null){
+                if(currentRoom.equals(northbasement)){
+                    northbasement.setExit("up", moneyroom);
+                    moneyroom.setExit("down", northbasement);
+                    System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+                }
+                else if(currentRoom.equals(eastbasement)){
+                    eastbasement.setExit("up", parkinglot);
+                    System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+                }
+                else if(currentRoom.equals(southbasement)){
+                    southbasement.setExit("up", centralhall);
+                    System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
+                }
+                else if(currentRoom.equals(westbasement)){
+                    System.out.println("You have drilled into the gender equality sewer. Nasty.");
+                }
+                else{
+                    System.out.println("You can not drill here now.");
+                }
             }
-            else if(currentRoom.equals(eastbasement)){
-                eastbasement.setExit("up", parkinglot);
-                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
-            }
-            else if(currentRoom.equals(southbasement)){
-                southbasement.setExit("up", centralhall);
-                System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
-            }
-            else if(currentRoom.equals(westbasement)){
-                System.out.println("You have drilled into the gender equality sewer. Nasty.");
+            else{
+                System.out.println("You can not drill here now.");
             }
         }
     }
@@ -507,8 +523,20 @@ public class Game
                 System.out.println();
                 System.out.println(currentRoom.getLongDescription());
             }
-
         }
+    }
 
+    private int inventoryWeight(){
+        if(inventory.size() >= 1){
+            int total = 0;
+            for(Item item : inventory){
+                int weight = item.getWeight();
+                total += weight;
+            }
+            return total;
+        }
+        else{
+            return 0;
+        }
     }
 }
