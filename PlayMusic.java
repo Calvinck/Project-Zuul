@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 public class PlayMusic {
     public void playMusic(String musicLocation) {
         try{
-            File musicPath = new File(musicLocation);
+            File musicPath = new File("audio/" + musicLocation);
 
             if(musicPath.exists()) {
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);

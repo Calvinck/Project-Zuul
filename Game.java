@@ -60,7 +60,7 @@ public class Game
         closet.put("flyer", new Item("flyer", "A random flyer for startup company's", "nonpickup", 1));
         closet.put("door_remote", new Item("door_remote", "this remote can open all doors you like.", "dooropener",99));
         closet.put("safekey", new Item("safekey", "This is a nice, shining, big, golden key. It must be the key that is used for the safe", "key", 1));
-        closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used these to rob this bank but he got caught. Contains duffle bag", "outfit", 3));
+        closet.put("burglar_clothes", new Item("burglar_clothes", "Another robber used this to rob this bank, but he was caught. Contains duffle bag", "outfit", 3));
         closet.put("book_of_knowlage", new Item("book_of_knowlage", "This book knows all", "book", 1));
         closet.put("bills", new Item("bills", "A briefcase full of $10 bills, probably worth about $10000", "money", 2));
         closet.put("drill", new Item("drill", "This is a big jackhammer, maybe you can use this to escape.", "drill", 5));
@@ -362,6 +362,7 @@ public class Game
             String desc = item.getDescription();
             String name = item.getName();
             if(item.getType() == "nonpickup") {
+                musicplayer.playMusic("checken.wav");
                 System.out.println("You found a " + name + ".");
                 System.out.println(desc);
                 System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
@@ -374,6 +375,7 @@ public class Game
             }
 
             else if(item.getWeight() + inventoryWeight() <= 10){
+                musicplayer.playMusic("checken.wav");
                 inventory.add(item);
                 currentRoom.removeObject(object, null);
                 System.out.println("You have found " + name + ".");
@@ -381,6 +383,7 @@ public class Game
                 System.out.println(name + " added to inventory");
             }
             else if(item.getType().equals("money") && currentOutfit.getName().equals("burglar_clothes")){
+                
                 inventory.add(item);
                 currentRoom.removeObject(object, null);
                 System.out.println("You have found " + name + ".");
@@ -440,19 +443,23 @@ public class Game
             else if(itemToUse.getType().equals("drill")){
                 if(currentRoom.getExit("up") == null){
                     if(currentRoom.equals(northbasement)){
+                        musicplayer.playMusic("boren.wav");
                         northbasement.setExit("up", moneyroom);
                         moneyroom.setExit("down", northbasement);
                         System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
                     }
                     else if(currentRoom.equals(eastbasement)){
+                        musicplayer.playMusic("boren.wav");
                         eastbasement.setExit("up", winningparkinglot);
                         System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
                     }
                     else if(currentRoom.equals(southbasement)){
+                        musicplayer.playMusic("boren.wav");
                         southbasement.setExit("up", losingcentralhall);
                         System.out.println("You have drilled a hole in the ceiling. Use 'go up' to check it out.");
                     }
                     else if(currentRoom.equals(westbasement)){
+                        musicplayer.playMusic("boren.wav");
                         System.out.println("You have drilled into the gender equality sewer. Nasty.");
                     }
                     else{
