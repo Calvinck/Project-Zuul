@@ -383,7 +383,6 @@ public class Game
                 System.out.println(name + " added to inventory");
             }
             else if(item.getType().equals("money") && currentOutfit.getName().equals("burglar_clothes")){
-                
                 inventory.add(item);
                 currentRoom.removeObject(object, null);
                 System.out.println("You have found " + name + ".");
