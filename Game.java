@@ -41,7 +41,6 @@ public class Game
         inventory = new ArrayList<>();
         prevRoom = new Stack<>();
         musicplayer = new PlayMusic();
-
     }
 
     public static void main(String[] args) {
@@ -53,7 +52,7 @@ public class Game
         closet = new HashMap<>();
         //initialize all items in the game
         closet.put("casual_clothes", new Item("casual_clothes", "Your normal everyday clothing", "outfit", 2));
-        //closet.put("escapecar", new Item("escapecar", "You will use this 1988 Chevrolet C/K to escape after you robbed the money.", "pickup", 900));
+        closet.put("escapecar", new Item("escapecar", "You will use this 1988 Chevrolet C/K to escape after you robbed the money.", "nonpickup", 900));
         closet.put("guard_clothes", new Item("guard_clothes", "Your henchman left these clothes out here for you.", "outfit", 3));
         closet.put("randombook", new Item("randombook", "This is a random book about some love issues", "nonpickup", 1));
         closet.put("bank_book", new Item("bank_book", "This is a book about running a bank'", "book", 1));
@@ -67,6 +66,9 @@ public class Game
         closet.put("lockpicks", new Item("lockpicks", "Why would there be a lockpicking set down here? might as well take it with me.", "lockpick", 1));
         closet.put("nimbus_2000", new Item("nimbus_2000", "This is a weird broom. Better leave it here.", "nonpickup", 2));
         closet.put("expensive_wine", new Item("expensive_wine", "The label of this wine says: Screaming Eagle Cabernet 1992", "nonpickup", 1));
+        closet.put("drawers_with_dollars", new Item("drawers_with_dollars", "A dresser full of $5 bills.", "money", 3));
+        closet.put("boxes_with_bills", new Item("boxes_with_bills", "Some boxes stacked with bills", "money", 2));
+        closet.put("racks_of_cash", new Item("racks_of_cash", "A few racks with some cash", "money", 4));
         closet.put("lots_of_gold", new Item("lots_of_gold", "Tables with lots and lots of gold.", "money", 12));
 
         //write books here
@@ -98,7 +100,7 @@ public class Game
         moneyroom = new Room("The moneyroom, finally, grab as much money as you can! There is gold locked behind bars.");
         winningparkinglot = new Room("This is where you escape and win the game.");
         losingcentralhall = new Room("This is where you get caught and los the game.");
-        
+
         // initialise room exits
         outside.setExit("north", centralhall);
         outside.setExit("east", parkinglot);
@@ -150,9 +152,13 @@ public class Game
         basement.setObject("bookcase", closet.get("book_of_knowlage"));
         westbasement.setObject("toolwall", closet.get("drill"));
         westbasement.setObject("toolbox", closet.get("lockpicks"));
+        moneyroom.setObject("boxes", closet.get("boxes_with_bills"));
+        moneyroom.setObject("drawers", closet.get("drawers_with_dollars"));
+        moneyroom.setObject("racks", closet.get("racks_of_cash"));
+        moneyroom.setObject("drawers", closet.get("drawers_with_dollars"));
 
         //random items in rooms
-        //parkinglot.setObject("parkinglot", closet.get("escapecar"));
+        parkinglot.setObject("parkinglot", closet.get("escapecar"));
         centralhall.setObject("frontdesk", closet.get("flyer"));
         controlroom.setObject("bookcase", closet.get("randombook"));
         northbasement.setObject("broom_closet", closet.get("nimbus_2000"));
@@ -199,8 +205,8 @@ public class Game
         System.out.println();
         System.out.println("Hello, do you want to play a game?");
         System.out.println();
-        System.out.println("You are dreaming of that nice Maserati");
-        System.out.println("That nice Granturismo Sport V8");
+        System.out.println("You are dreaming of that nice Aston Martin");
+        System.out.println("That nice DBS Superleggra V12");
         System.out.println("But your Bank account says '1.5 frikadelbroodje'");
         System.out.println();
         System.out.println("Type 'help' if you need help.");
@@ -301,13 +307,20 @@ public class Game
                 if(inventory.size() >= 1){
                     for(Item item : inventory){
                         if(item.getType().equals("money")){
-                            int score = item.getWeight() * 5000;
+                            int score = item.getWeight() * 15000;
                             totalScore += score;
                         }
                     }
                 }
                 System.out.println("Congratulations! You did it! you escaped the bank without getting caught!\n");
-                System.out.println("You have collected $" + totalScore + " along the way.\n");
+                System.out.println("You have collected $" + totalScore + " along the way.");
+                if(totalScore >= 340000){
+                    System.out.println("That is enough for your $340.000 dream car!\n");
+                }
+                else{
+                    int shortage = 340000 - totalScore;
+                    System.out.println("You are $" + shortage + " short on your dreamcar.\n");
+                }
                 wantToQuit = true;
             }
             else if(nextRoom.equals(losingcentralhall)){
@@ -365,7 +378,7 @@ public class Game
                 musicplayer.playMusic("checken.wav");
                 System.out.println("You found a " + name + ".");
                 System.out.println(desc);
-                System.out.println("The " + item.getName() + " is not important. So you decided to put it back.");
+                System.out.println("The " + item.getName() + " is not important for now. So you decided to put it back.");
             }
             else if(item.getType() == "dooropener"){
                 meetingroom.unlockDoor();
@@ -426,7 +439,7 @@ public class Game
             }
             else if(itemToUse.getType().equals("outfit")){
                 if(currentRoom.getRequiredOutfit() != null){
-                    System.out.println("You can not change you outfit now.");
+                    System.out.println("You can not change your outfit now.");
                 }
                 else{
                     musicplayer.playMusic(omkleden);
