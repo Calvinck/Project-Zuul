@@ -199,7 +199,7 @@ public class Game
      */
     private void printWelcome()
     {
-        String welcome = "welcome.wav";
+        String welcome = "superlegga.wav";
 
         musicplayer.playMusic(welcome);
         System.out.println();
